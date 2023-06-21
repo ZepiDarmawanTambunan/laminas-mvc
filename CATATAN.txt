@@ -1,0 +1,25 @@
+- composer create-project
+
+- setup xampp -> php -> config -> php.ini -> extention=intl
+
+- cd project / composer serve
+
+- setup laminas mvc starter
+composer require --dev divix1988/laminas-cli-commands
+https://github.com/divix1988/laminas-cli-commands
+
+- setup config/autoload/local.php.dist change name to local.php
+https://github.com/divix1988/laminas-cli-commands
+
+$ php -S 0.0.0.0:8080 -t public
+# OR use the composer alias:
+$ composer serve
+
+- make module in cmd
+"vendor/bin/laminas.bat" mvc:controller --actions=<action1> --actions=<action2> --module=ModuleName <name>
+"vendor/bin/laminas.bat" mvc:controller --actions=action1 --actions=action2 --module=ModuleName SampleName
+
+// ROUTE
+/inventory
+/inventory/:id
+/resep
