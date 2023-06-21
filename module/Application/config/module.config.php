@@ -70,12 +70,26 @@ return [
                     ],
                 ],
             ],
+            'users' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/users[/:action[/:id]]',
+                    'defaults' => [
+                        'controller' => Controller\UsersController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
             Controller\InventoryController::class => InvokableFactory::class,
+            Controller\UsersController::class => function($sm) {
+                $postService = $sm->get('Application\Model\UsersTable');
+                return new Controller\UsersController($postService);
+            },
             Controller\ResepController::class => function($container) {
                 $resepTable = $container->get(Model\ResepTable::class);
                 return new Controller\ResepController($resepTable);
@@ -97,13 +111,15 @@ return [
         'template_path_stack' => [
             __DIR__ . '/../view',
         ],
+        // 'base_path' => '/laminas-mvc/public/',
+        // 'base_url' => '/laminas-mvc/'
     ],
     'service_manager' => [
         'factories' => [
             Model\ResepTable::class => function ($container) {
                 $dbAdapter = $container->get(AdapterInterface::class);
                 $resultSetPrototype = new ResultSet();
-                $resultSetPrototype->setArrayObjectPrototype(new Model\Resep());
+                $resultSetPrototype->setArrayObjectPrototype(new Model\Rowset\Resep());
                 return new Model\ResepTable('reseps', $dbAdapter, null, $resultSetPrototype);
             },
         ],

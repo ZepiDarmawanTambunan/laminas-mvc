@@ -5,48 +5,14 @@ namespace Application\Model\Rowset;
 use DomainException;
 use Laminas\Filter\ToInt;
 
-class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilterAwareInterface
+class Resep extends AbstractModel implements \Laminas\InputFilter\InputFilterAwareInterface
 {
-
-    public $inputFilter = null;
-    public $title = null;
-    public $description = null;
-    public $qty = null;
     public $id = null;
-
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    public function setTitle($value)
-    {
-        $this->title = $value;
-        return $this;
-    }
-
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    public function setDescription($value)
-    {
-        $this->description = $value;
-        return $this;
-    }
-
-    public function getQty()
-    {
-        return $this->qty;
-    }
-
-    public function setQty($value)
-    {
-        $this->qty = $value;
-        return $this;
-    }
-
+    public $nama = null;
+    public $bahan = null;
+    public $langkah = null;
+    public $inputFilter = null;
+    
     public function getId()
     {
         return $this->id;
@@ -57,24 +23,55 @@ class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilte
         $this->id = $value;
         return $this;
     }
-
-    public function exchangeArray(array $row)
+    
+    public function getNama()
     {
-        $this->id = (!empty($row['id'])) ? $row['id'] : null;
-        $this->title = (!empty($row['title'])) ? $row['title'] : null;
-        $this->description = (!empty($row['description'])) ? $row['description'] : null;
-        $this->qty = (!empty($row['qty'])) ? $row['qty'] : null;
-        $this->id = (!empty($row['id'])) ? $row['id'] : null;
+        return $this->nama;
+    }
+
+    public function setNama($value)
+    {
+        $this->nama = $value;
+        return $this;
+    }
+
+    public function getBahan()
+    {
+        return $this->bahan;
+    }
+
+    public function setBahan($value)
+    {
+        $this->bahan = $value;
+        return $this;
+    }
+
+    public function getLangkah()
+    {
+        return $this->langkah;
+    }
+
+    public function setLangkah($value)
+    {
+        $this->langkah = $value;
+        return $this;
+    }
+
+    public function exchangeArray(array $data)
+    {
+        $this->id = $data['id'] ?? null;
+        $this->nama = $data['nama'] ?? null;
+        $this->bahan = $data['bahan'] ?? null;
+        $this->langkah = $data['langkah'] ?? null;
     }
 
     public function getArrayCopy()
     {
         return[
             'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'description' => $this->getDescription(),
-            'qty' => $this->getQty(),
-            'id' => $this->getId(),
+            'nama' => $this->getNama(),
+            'bahan' => $this->getBahan(),
+            'langkah' => $this->getLangkah(),
         ];
     }
 
