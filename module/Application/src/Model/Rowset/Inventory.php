@@ -7,13 +7,14 @@ use Laminas\Filter\ToInt;
 
 class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilterAwareInterface
 {
+    private $id = null;
+    private $inputFilter = null;
+    private $title = null;
+    private $description = null;
+    private $qty = null;
+    private $image = null;
 
-    public $inputFilter = null;
-    public $title = null;
-    public $description = null;
-    public $qty = null;
-    public $id = null;
-
+    // get set peritem/column/field
     public function getTitle()
     {
         return $this->title;
@@ -47,6 +48,17 @@ class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilte
         return $this;
     }
 
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($value)
+    {
+        $this->image = $value;
+        return $this;
+    }
+
     public function getId()
     {
         return $this->id;
@@ -58,15 +70,17 @@ class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilte
         return $this;
     }
 
+    // dari database to create object inventory
     public function exchangeArray(array $row)
     {
         $this->id = (!empty($row['id'])) ? $row['id'] : null;
         $this->title = (!empty($row['title'])) ? $row['title'] : null;
         $this->description = (!empty($row['description'])) ? $row['description'] : null;
         $this->qty = (!empty($row['qty'])) ? $row['qty'] : null;
-        $this->id = (!empty($row['id'])) ? $row['id'] : null;
+        $this->image = (!empty($row['image'])) ? $row['image'] : null;
     }
 
+    // get inventory
     public function getArrayCopy()
     {
         return[
@@ -74,11 +88,11 @@ class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilte
             'title' => $this->getTitle(),
             'description' => $this->getDescription(),
             'qty' => $this->getQty(),
-            'id' => $this->getId(),
+            'image' => $this->getImage(),
         ];
     }
 
-    public function getInputFilter(bool $includeIdField = true)
+    public function getInputFilter()
     {
         if ($this->inputFilter) {
             return $this->inputFilter;
@@ -86,31 +100,28 @@ class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilte
 
         $inputFilter = new \Laminas\InputFilter\InputFilter();
 
-        if ($includeIdField) {
-            $inputFilter->add([
-                'name' => 'id',
-                'required' => true,
-                'filters' => [
-                    ['name' => ToInt::class],
-                ],
-            ]);
-        }
         $inputFilter->add([
             'name' => 'title',
             'required' => true,
         ]);
 
         $inputFilter->add([
+            'name' => 'image',
+            'required' => false
+        ]);
+
+        $inputFilter->add([
             'name' => 'description',
+            'required' => true,
         ]);
 
         $inputFilter->add([
             'name' => 'qty',
+            'required' => true,
             'filters' => [
                 ['name' => ToInt::class],
             ],
         ]);
-
 
         $this->inputFilter = $inputFilter;
         return $inputFilter;
@@ -118,6 +129,7 @@ class Inventory extends AbstractModel implements \Laminas\InputFilter\InputFilte
 
     public function setInputFilter(\Laminas\InputFilter\InputFilterInterface $inputFilter)
     {
-        throw new DomainException('This class does not support adding of extra input filters');
+        $this->inputFilter = $inputFilter;
+        return $this;
     }
 }

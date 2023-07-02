@@ -1,51 +1,53 @@
 <?php
+
 namespace Application\Model;
 
-use Application\Model\Rowset\User;
+use Application\Model\Rowset\Inventory;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\Sql\Sql;
 use Laminas\Db\TableGateway\TableGateway;
 use RuntimeException;
 
-class UsersTable{
+class InventoryTable{
 
-    protected $tableGateway;
+    private $tableGateway;
 
-    public function __construct(TableGateway $tableGateway)
+    public function __construct($table, AdapterInterface $adapter, $features = null, ResultSet $resultSetPrototype = null, Sql $sql = null)
     {
-        $this->tableGateway = $tableGateway;
+        $this->tableGateway = new TableGateway($table, $adapter, $features, $resultSetPrototype, $sql);
     }
 
-    // primary method
     public function getById($id)
     {
         $id = (int) $id;
         $rowset = $this->tableGateway->select(array('id' => $id));
         $row = $rowset->current();
         if (!$row) {
-            throw new \Exception('user not foound with id: '.$id);
+            throw new \Exception('inventory not found with id: '.$id);
         }
         return $row;
     }
+
     public function getAll()
     {
         $results = $this->tableGateway->select();
         return $results;
     }
 
-    public function save(User $model)
+    public function save(Inventory $model)
     {
         $data = [
-            'username' => $model->getUsername()
+            'title' => $model->getTitle(),
+            'description' => $model->getDescription(),
+            'qty' => $model->getQty(),
+            'image' => $model->getImage(),
         ];
         return $this->saveRow($model, $data);
     }
-    
-    public function delete($id)
-    {
-        $this->deleteRow($id);
-    }
 
     // secondary method
-    private function saveRow(User $model, $data=null){
+    private function saveRow(Inventory $model, $data=null){
         $id = $model->getId();
 
         if(empty($data)){
@@ -64,8 +66,5 @@ class UsersTable{
         $this->tableGateway->update($data, ['id' => $id]);
         return $id;
     }
-
-    private function deleteRow($id){
-        $this->tableGateway->delete(['id' => (int) $id]);
-    }
 }
+?>

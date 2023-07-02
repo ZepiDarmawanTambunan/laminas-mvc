@@ -1,7 +1,6 @@
 <?php
 namespace Application\Model;
 
-use Laminas\Db\TableGateway\TableGatewayInterface;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Sql;

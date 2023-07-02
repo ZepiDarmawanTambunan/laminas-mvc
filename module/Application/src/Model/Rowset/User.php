@@ -16,18 +16,22 @@ class User implements InputFilterAwareInterface
     protected $id;
     protected $username;
     protected $password;
+
     public function exchangeArray($row)
     {
         $this->id = (!empty($row['id'])) ? $row['id'] : null;
         $this->username = (!empty($row['username'])) ? $row['username'] : null;
         $this->password = (!empty($row['password'])) ? $row['password'] : null;
     }
+
     public function getId() {
         return $this->id;
     }
+
     public function getUsername() {
         return $this->username;
     }
+
     public function getPassword() {
         return $this->password;
     }
@@ -39,10 +43,7 @@ class User implements InputFilterAwareInterface
             'username' => $this->getUsername()
         ];
     }
-    public function setInputFilter(InputFilterInterface $inputFilter)
-    {
-        throw new DomainException('This class does not support adding of extra input filters');
-    }
+
     public function getInputFilter()
     {
         if ($this->inputFilter) {
@@ -76,5 +77,10 @@ class User implements InputFilterAwareInterface
         ]);
         $this->inputFilter = $inputFilter;
         return $this->inputFilter;
+    }
+
+    public function setInputFilter(InputFilterInterface $inputFilter)
+    {
+        throw new DomainException('This class does not support adding of extra input filters');
     }
 }

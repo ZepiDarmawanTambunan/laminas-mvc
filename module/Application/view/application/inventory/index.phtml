@@ -1,0 +1,35 @@
+<div class="jumbotron">
+    <h1>
+        <span class="zf-green">Inventory</span>
+    </h1>
+    <a href="<?= $this->url('inventory', ['action' => 'add']) ?>" class="btn btn-primary">
+        Add Inventory
+    </a>
+    <table class="table" id="inventoryTable">
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Qty</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+        <?php foreach ($inventoryRows as $inventory): ?>
+        <tr>
+            <td><?= $inventory->getId() ?></td>
+            <td><?= $inventory->getTitle() ?></td>
+            <td><?= $inventory->getDescription() ?></td>
+            <td><?= $inventory->getQty() ?></td>
+            <td>
+                <?php if ($inventory->getImage()): ?>
+                    <img src="<?= $this->basePath('uploads/' . $inventory->getImage()) ?>" alt="Inventory Image" height="50" width="50">
+                <?php endif; ?>
+            </td>
+            <td>
+                <a href="<?= $this->url('inventory', ['action' => 'edit', 'id' => $inventory->getId()]) ?>" class="btn btn-sm btn-warning">Edit</a> |
+                <a href="<?= $this->url('inventory', ['action' => 'delete', 'id' => $inventory->getId()]) ?>" class="btn btn-sm btn-danger">Remove</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</div>

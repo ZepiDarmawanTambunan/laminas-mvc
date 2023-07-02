@@ -9,7 +9,6 @@ use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\TableGateway\TableGateway;
 
 return [
     'router' => [
@@ -24,36 +23,13 @@ return [
                     ],
                 ],
             ],
-            'application' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/application[/:action]',
-                    'defaults' => [
-                        'controller' => Controller\IndexController::class,
-                        'action'     => 'index',
-                    ],
-                ],
-            ],
             'inventory' => [
-                'type'    => Literal::class,
+                'type'    => Segment::class,
                 'options' => [
-                    'route'    => '/inventory',
+                    'route' => '/inventory[/:action[/:id]]',
                     'defaults' => [
                         'controller' => Controller\InventoryController::class,
                         'action'     => 'index',
-                    ],
-                ],
-            ],
-            'inventory-detail' => [
-                'type'    => Segment::class,
-                'options' => [
-                    'route'    => '/inventory/:id',
-                    'defaults' => [
-                        'controller' => Controller\InventoryController::class,
-                        'action'     => 'show',
-                    ],
-                    'constraints' => [
-                        'id' => '\d+',
                     ],
                 ],
             ],
@@ -85,13 +61,16 @@ return [
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
-            Controller\InventoryController::class => InvokableFactory::class,
-            Controller\UsersController::class => function($sm) {
-                $postService = $sm->get('Application\Model\UsersTable');
-                return new Controller\UsersController($postService);
+            Controller\InventoryController::class => function($serviceManager){
+                $inventoryTable = $serviceManager->get(Model\InventoryTable::class);
+                return new Controller\InventoryController($inventoryTable);
             },
-            Controller\ResepController::class => function($container) {
-                $resepTable = $container->get(Model\ResepTable::class);
+            Controller\UsersController::class => function($serviceManager) {
+                $usersTable = $serviceManager->get('Application\Model\UsersTable'); //cara lama
+                return new Controller\UsersController($usersTable);
+            },
+            Controller\ResepController::class => function($serviceManager) {
+                $resepTable = $serviceManager->get(Model\ResepTable::class);
                 return new Controller\ResepController($resepTable);
             },
         ],
@@ -121,6 +100,12 @@ return [
                 $resultSetPrototype = new ResultSet();
                 $resultSetPrototype->setArrayObjectPrototype(new Model\Rowset\Resep());
                 return new Model\ResepTable('reseps', $dbAdapter, null, $resultSetPrototype);
+            },
+            Model\InventoryTable::class => function ($container) {
+                $dbAdapter = $container->get(AdapterInterface::class);
+                $resultSetPrototype = new ResultSet();
+                $resultSetPrototype->setArrayObjectPrototype(new Model\Rowset\Inventory());
+                return new Model\InventoryTable('inventory', $dbAdapter, null, $resultSetPrototype);
             },
         ],
     ],
